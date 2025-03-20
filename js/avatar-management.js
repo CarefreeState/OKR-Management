@@ -17,7 +17,12 @@ confirmDelete.addEventListener("click", function () {
         null,
         function (data) {
           currentAvatarItem.remove(); // 删除头像
-          console.log("图片已删除");
+          jQuery.toast({
+            heading: "成功",
+            text: "头像删除成功",
+            icon: "success",
+            allowToastClose: true,
+          });
         }
       );
     }
@@ -90,6 +95,12 @@ function uploadPhoto(event) {
             data;
           photo += '">×</div>';
           jQuery("#upload-button").before(photo);
+          jQuery.toast({
+            heading: "成功",
+            text: "头像上传成功",
+            icon: "success",
+            allowToastClose: true,
+          });
         }
       );
     } else {

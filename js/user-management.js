@@ -1,6 +1,15 @@
-jQuery("#input-username").blur(queryUsers);
-jQuery("#input-nickname").blur(queryUsers);
-jQuery("#select-userType").change(queryUsers);
+
+function conditionRefresh() {
+  jQuery("#input-current").val("");
+  jQuery("#input-pageSize").val("");
+  queryUsers();
+}
+
+jQuery("#input-username").blur(conditionRefresh);
+jQuery("#input-nickname").blur(conditionRefresh);
+jQuery("#select-userType").change(conditionRefresh);
+jQuery("#select-userType").blur(conditionRefresh);
+
 jQuery("#input-current").blur(queryUsers);
 jQuery("#input-pageSize").blur(queryUsers);
 
@@ -44,9 +53,14 @@ confirmReset.addEventListener("click", function () {
       {},
       function (data) {
         jQuery("#avatar" + userId).attr("src", getBaseUrl("/" + data));
+        jQuery.toast({
+          heading: "成功",
+          text: "头像已重置",
+          icon: "success",
+          allowToastClose: true,
+        });
       }
     );
-    console.log("头像已重置");
   }
 });
 
@@ -56,9 +70,9 @@ cancelReset.addEventListener("click", function () {
 
 confirmUpdate.addEventListener("click", function () {
   if (updateModal.style.display != "none") {
-    updateModal.style.display = "none";
     var selectedType = newUserType.value;
     if (selectedType) {
+      updateModal.style.display = "none";
       var userId = jQuery("#update-user-id").val(); // 获取用户 ID
       jsonRequestWithToken(
         "/user/update/type/" + userId,
@@ -68,9 +82,21 @@ confirmUpdate.addEventListener("click", function () {
         },
         function (data) {
           jQuery("#userType" + userId).text(getType(selectedType));
+          jQuery.toast({
+            heading: "成功",
+            text: "用户类型已更新",
+            icon: "success",
+            allowToastClose: true,
+          });
         }
       );
-      console.log("用户类型已更新为: " + selectedType);
+    } else {
+      jQuery.toast({
+        heading: "异常",
+        text: "请选择用户类型！",
+        icon: "warning",
+        allowToastClose: true,
+      });
     }
   }
 });

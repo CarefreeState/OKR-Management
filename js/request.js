@@ -5,21 +5,6 @@ function toLogin() {
     icon: "info",
     allowToastClose: true,
   });
-  setTimeout(function () {
-    location.href = "login.html";
-  }, 3000);
-}
-
-function toUserManagement() {
-  jQuery.toast({
-    heading: "提示",
-    text: "前往系统用户管理",
-    icon: "info",
-    allowToastClose: true,
-  });
-  setTimeout(function () {
-    location.href = "user-management.html";
-  }, 3000);
 }
 
 function setToken(token) {
@@ -37,7 +22,7 @@ function getToken() {
     console.log("获取 token：" + token);
     return jQuery.cookie("token");
   } else {
-    toLogin();
+    return null;
   }
 }
 
@@ -168,7 +153,7 @@ function login(u, p) {
           allowToastClose: true,
         });
         setToken(body.data.Token);
-        toUserManagement();
+        location.href = "user-management.html";
       } else {
         jQuery.toast({
           heading: "异常",

@@ -50,10 +50,20 @@ function queryPhotos() {
     }
     jQuery(".avatar-grid").append(
       jQuery(
-        '<div id="upload-button" class="avatar-item" onclick="uploadClick()"><input type="file" id="upload-input" accept="image/*" style="display: none" /><span class="upload-flag">+</span></div>'
+        '<div id="upload-button" class="avatar-item" onclick="uploadClick()"><input type="file" id="upload-input" style="display: none" multiple /><span class="upload-flag">+</span></div>'
       )
     );
     initImageEvent();
+  });
+}
+
+function addDeleteEvent(overlay) {
+  overlay.addEventListener("click", function (event) {
+    event.stopPropagation(); // 阻止事件冒泡
+    currentAvatarItem = this.closest(".avatar-item"); // 记录当前点击的头像
+    console.log(overlay.getAttribute("data-photo-code"));
+    code = overlay.getAttribute("data-photo-code");
+    deleteModal.style.display = "flex"; // 显示模态框
   });
 }
 
@@ -62,15 +72,7 @@ function initImageEvent() {
   uploadInput = document.getElementById("upload-input");
   uploadInput.addEventListener("change", uploadPhoto);
   // 点击删除按钮时显示模态框
-  document.querySelectorAll(".delete-overlay").forEach((overlay) => {
-    overlay.addEventListener("click", function (event) {
-      event.stopPropagation(); // 阻止事件冒泡
-      currentAvatarItem = this.closest(".avatar-item"); // 记录当前点击的头像
-      console.log(overlay.getAttribute("data-photo-code"));
-      code = overlay.getAttribute("data-photo-code");
-      deleteModal.style.display = "flex"; // 显示模态框
-    });
-  });
+  document.querySelectorAll(".delete-overlay").forEach(addDeleteEvent);
 }
 
 function uploadClick() {
@@ -80,6 +82,17 @@ function uploadClick() {
 function uploadPhoto(event) {
   const file = event.target.files[0];
   if (file) {
+    jQuery("#upload-input").val("");
+    // 文件大于 3M
+    if(file.size > 3145728) {
+      jQuery.toast({
+        heading: "异常",
+        text: "文件资源过大！",
+        icon: "warning",
+        allowToastClose: true,
+      });
+      return;
+    }
     if (file.type.startsWith("image/")) {
       const formData = new FormData();
       formData.append("photo", file);
@@ -88,13 +101,15 @@ function uploadPhoto(event) {
         "POST",
         formData,
         function (data) {
+          var uuid = crypto.randomUUID();
           var photo =
             '<div class="avatar-item"><img src="' + getBaseUrl("/" + data);
           photo +=
-            '" alt="头像" /><div class="delete-overlay" data-photo-code="' +
+            '" alt="头像" /><div id="' + uuid + '" class="delete-overlay" data-photo-code="' +
             data;
           photo += '">×</div>';
           jQuery("#upload-button").before(photo);
+          addDeleteEvent(document.getElementById(uuid));
           jQuery.toast({
             heading: "成功",
             text: "头像上传成功",

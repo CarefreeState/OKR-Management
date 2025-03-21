@@ -45,7 +45,7 @@ function formRequestWithToken(u, m, d, s) {
   fetch(getBaseUrl(u), {
     method: m,
     headers: {
-      token: getToken(),
+      Token: getToken(),
     },
     body: d ? d : null,
   })
@@ -92,7 +92,7 @@ function jsonRequestWithToken(u, m, d, s) {
     method: m,
     contentType: "application/json; charset=utf8",
     headers: {
-      token: getToken(),
+      Token: getToken(),
     },
     data: d ? JSON.stringify(d) : null,
     success: function (body) {
